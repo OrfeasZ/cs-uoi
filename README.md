@@ -8,7 +8,7 @@
 Ελπίζω να σας φανούν χρήσιμα και να θυμάστε ότι 'κλέβοντας' ή 'αντιγράφνοτας' δεν γίνεστε ούτε Computer Scientist, ούτε Software Engineer.
 
 
-University of Ioannina - Computer Scienc
+University of Ioannina - Computer Science
 ---
 Lab Excersises and Assignments
 
