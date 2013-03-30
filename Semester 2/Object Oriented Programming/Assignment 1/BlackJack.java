@@ -90,8 +90,9 @@ class CardPrinter
 
 class River
 {
-    public int[] m_Cards;
+    private int[] m_Cards;
     private int[] m_CardValues = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 4 };
+    private int[] m_RemainingCards = new int[10];
     private Random m_Random;
     private int m_DeckCount;
 
@@ -106,7 +107,7 @@ class River
         m_DeckCount = (p_DeckCount <= 1) ? 1 : p_DeckCount;
         start();
     }
-
+    
     public void start()
     {
         CardPrinter.ResetDecks(m_DeckCount);
@@ -114,25 +115,29 @@ class River
         m_Random = new Random();
         m_Cards = new int[10];
 
-        for(int i = 0; i < m_CardValues.length; ++i)
+        for(int i = 0; i < m_CardValues.length; ++i) 
+        {
             m_Cards[i] = (i <= 0 ? 0 : m_Cards[i-1]) + (4 * m_DeckCount * m_CardValues[i]);
+            m_RemainingCards[i] = 4 * m_DeckCount * m_CardValues[i];
+        }
     }
 
     public int nextCard()
     {
         // Check if we need to shuffle the deck(s)
-        if (m_Cards[9] < 11 * m_DeckCount)
+        if (m_Cards[9] < (52 * m_DeckCount) / 4)
             start();
 
         int x = m_Random.nextInt(m_Cards[9]) + 1;
 
-        int s_Pos = 9;
+        int s_Pos = 0;
         for(int i = 0; i < m_Cards.length; ++i)
-            if (m_Cards[i] > 0 && m_Cards[i] <= x)
+            if (m_Cards[i] > 0 && m_Cards[i] <= x && m_RemainingCards[i] > 0)
                 s_Pos = i;
 
+        --m_RemainingCards[s_Pos];
         for(int i = s_Pos; i < m_Cards.length; ++i)
-            --m_Cards[i];
+            m_Cards[i] = (i <= 0 ? 0 : m_Cards[i-1]) + (m_RemainingCards[s_Pos] * m_DeckCount * m_CardValues[i]);
 
         return s_Pos + 1;
     }
@@ -442,7 +447,7 @@ class BlackJack
         System.out.println();
 
         m_River = new River(s_Decks);
-
+        
         Player s_Player = new Player();
 
         while(s_Player.play(m_River)) {
